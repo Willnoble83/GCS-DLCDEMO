@@ -41,7 +41,7 @@ public class KeyLoader : MonoBehaviour
             }
             else
 			{
-                Debug.LogError($"Key or path didn't exist!");
+                Debug.Log($"Key '{key}' not found");
 			}
         }
         if (loadedKeys.Count == 0)
@@ -50,6 +50,7 @@ public class KeyLoader : MonoBehaviour
         }
         else {
             keys = loadedKeys;
+            Controller.reference.AdjustButtonInteractable();
         }
     }
 

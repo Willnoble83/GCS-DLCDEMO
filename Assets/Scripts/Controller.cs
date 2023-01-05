@@ -7,14 +7,21 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    public static Controller reference;
+
     public TMP_Text DisplayText;
     Downloader downloader;
     public Button DLC1Button;
     public Button DLC2Button;
 
 	const string bucket = "gcsdlcdemo-files";
-    // Start is called before the first frame update
-    void Start()
+
+	private void Awake()
+	{
+        reference = this;
+	}
+
+	void Start()
     {
         UpdateText("");
         downloader = new Downloader();
@@ -28,6 +35,28 @@ public class Controller : MonoBehaviour
         });
 
     }
+
+    public void AdjustButtonInteractable()
+	{
+        DLC1Button.interactable = false;
+        DLC1Button.GetComponentInChildren<TMP_Text>().text = "DLC1 (Not Found)";
+        DLC2Button.interactable = false;
+        DLC2Button.GetComponentInChildren<TMP_Text>().text = "DLC2 (Not Found)";
+        foreach(Key key in KeyLoader.keys)
+		{
+            if(key.id == "dlc1")
+			{
+                DLC1Button.interactable = true;
+                DLC1Button.GetComponentInChildren<TMP_Text>().text = "DLC1 (Encrypted)";
+			}
+            else if (key.id == "dlc2")
+			{
+                DLC2Button.interactable = true;
+                DLC2Button.GetComponentInChildren<TMP_Text>().text = "DLC2 (Encrypted)";
+			}
+		}
+	}
+
     /*
      * Starts a download of an unencrypted object and updates the displayed text
      * Takes the name of the object to download from Google Cloud Storage
@@ -57,6 +86,7 @@ public class Controller : MonoBehaviour
         string key = null;
         foreach(Key LoadedKey in KeyLoader.keys)
 		{
+            Debug.Log($"Testing {LoadedKey.id}");
             if(LoadedKey.id == keyID)
 			{
                 key = LoadedKey.key;
